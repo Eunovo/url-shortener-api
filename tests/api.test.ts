@@ -9,23 +9,36 @@ describe('API test', () => {
         await Alias.deleteMany({});
         await mongoose.disconnect();
     })
-    
-    it('should store a long url an alias that can be used to retrieve the original url', async function () {
-        this.timeout(10000);
 
-        const url = 'http://long-john-browner/kitkats/the-red-one';
-        let response = await request(app)
-            .post('/store')
-            .send({ url })
-            .expect(200);
+    it('should store a new url an alias that can be used to retrieve the original url', async function () {
+        const urls = [
+            'http://long-john-browner/kitkats/the-red-one',
+            'http://long-john-browner/kitkats/the-blue-one'
+        ];
 
-        assert.notEqual(response.body.alias, undefined);
+        // Should be able to store and retrieve urls
+        for (const url of urls) {
+            let response = await request(app)
+                .post('/store')
+                .send({ url })
+                .expect(200);
 
-        response = await request(app)
-            .get('/read')
-            .query({ alias: response.body.alias })
-            .expect(200);
+            assert.notEqual(response.body.alias, undefined);
 
-        assert.equal(response.body.url, url);
+            response = await request(app)
+                .get('/read')
+                .query({ alias: response.body.alias })
+                .expect(200);
+
+            assert.equal(response.body.url, url);
+        }
+
+        // Should reject duplicate URLs
+        for (const url of urls) {
+            await request(app)
+                .post('/store')
+                .send({ url })
+                .expect(400);
+        }
     });
 });

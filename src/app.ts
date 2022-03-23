@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import { nanoid } from "nanoid/async";
 import { config } from "dotenv";
 import { setup } from "./db/setup";
 import { Alias } from "./db/AliasModel";
@@ -13,11 +14,14 @@ const app = express();
 
 app.use(express.json());
 
+const ALIAS_MAX_LEN = Number.parseInt(process.env.ALIAS_MAX_LEN || '');
+if (isNaN(ALIAS_MAX_LEN)) throw new Error('ALIAS_MAX_LEN is not set');
+
 app.post('/store', async (req, res, next) => {
     try {
         const { url } = req.body;
-        const alias = 'alias';
 
+        const alias = await nanoid(ALIAS_MAX_LEN);
         const model = new Alias({ url, alias });
         await model.save();
 
