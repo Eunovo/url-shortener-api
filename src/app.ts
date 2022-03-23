@@ -28,7 +28,6 @@ app.post('/store', async (req, res, next) => {
         res.status(200);
         res.json({ url, alias });
     } catch (error: any) {
-        console.log(error);
         res.status(400);
         res.json({ message: 'Bad Input', errors: parseError(error) });
     }
