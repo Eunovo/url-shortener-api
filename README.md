@@ -22,4 +22,4 @@ Each alias must map to only one URL. I use the [nanoid package](https://github.c
 **It shows that with 8 characters per alias, generating 10 aliases per hour, it will take 27 years in order to have a 1% probability of at least one collision.**
 
 ## Test Coverage
-![Test Coverage screenshot](https://drive.google.com/file/d/1BT3Yk8PIq08XKK_OG-FajhyVqAW163Zj/view?usp=sharing)
+![Test Coverage screenshot](https://lh3.googleusercontent.com/MyQJt8Wtg-x2OazvsqN8DEkdwmhFpMAXer2oip5rIjspov0uSU-dn9lTK85w-80PCPNkkEcjSXbnpj-USJGZ=w924-h902-rw)
