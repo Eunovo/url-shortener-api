@@ -19,14 +19,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_Alias.url-or-alias_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"url":{"dataType":"string","required":true},"alias":{"dataType":"string","required":true}},"validators":{}},
+    "CreateAliasResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "url": {"dataType":"string","required":true},
+            "alias": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateAliasResponse": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_Alias.url-or-alias_","validators":{}},
+    "CreateAliasRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "url": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -67,7 +74,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function AliasController_createAlias(request: any, response: any, next: any) {
             const args = {
-                    url: {"in":"body-prop","name":"url","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"ref":"CreateAliasRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

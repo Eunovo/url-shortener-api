@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid/async";
 import {
-    BodyProp,
+    Body,
     Controller,
     Get,
     Path,
@@ -15,11 +15,10 @@ import { isWebUri } from "valid-url";
 import { AliasModel } from "../db/AliasModel";
 import { Alias } from "../models/Alias";
 import { parseError } from "../utils/mongoose";
+import { CreateAliasRequest, CreateAliasResponse } from "./types";
 
 const ALIAS_MAX_LEN = Number.parseInt(process.env.ALIAS_MAX_LEN || '');
 if (isNaN(ALIAS_MAX_LEN)) throw new Error('ALIAS_MAX_LEN is not set');
-
-type CreateAliasResponse = Pick<Alias, 'url' | 'alias'>;
 
 @Route("alias")
 export class AliasController extends Controller {
@@ -47,15 +46,17 @@ export class AliasController extends Controller {
 
     /**
      * Saves the url and returns an alias for it
-     * @param requestBody 
+     * @param body.url must be a valid web url
      * @returns 
      */
     @SuccessResponse("200", "Created")
     @Post()
     public async createAlias(
-        @BodyProp() url: string
+        @Body() body: CreateAliasRequest
     ): Promise<CreateAliasResponse> {
         try {
+            const { url } = body
+
             if (!isWebUri(url))
                 throw new ValidateError(
                     { url: { message: 'Invalid url', value: url } },
