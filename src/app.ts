@@ -42,8 +42,6 @@ app.use(function errorHandler(
             message: "Internal Server Error",
         });
     }
-
-    next();
 });
 
 export { app };

@@ -11,6 +11,7 @@ import {
     TsoaResponse,
     ValidateError,
 } from "tsoa";
+import { isWebUri } from "valid-url";
 import { AliasModel } from "../db/AliasModel";
 import { Alias } from "../models/Alias";
 import { parseError } from "../utils/mongoose";
@@ -55,6 +56,12 @@ export class AliasController extends Controller {
         @BodyProp() url: string
     ): Promise<CreateAliasResponse> {
         try {
+            if (!isWebUri(url))
+                throw new ValidateError(
+                    { url: { message: 'Invalid url', value: url } },
+                    "Bad Input"
+                );
+
             const alias = await nanoid(ALIAS_MAX_LEN);
             const model = new AliasModel({ url, alias });
             await model.save();

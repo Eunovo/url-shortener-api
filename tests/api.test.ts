@@ -40,4 +40,17 @@ describe('API test', () => {
                 .expect(422);
         }
     });
+
+    it('should return 404 for a non-existent alias', async function () {
+        await request(app)
+            .get('/alias/a-non-existent-alias')
+            .expect(404);
+    });
+
+    it('should reject invalid urls', async () => {
+        await request(app)
+            .post('/alias')
+            .send({ url: 'an-invalid-url' })
+            .expect(422);
+    });
 });
