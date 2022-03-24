@@ -1,11 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
-import { nanoid } from "nanoid/async";
+import express, { NextFunction, Request as ExRequest, Response as ExResponse } from "express";
 import { config } from "dotenv";
-import { setup } from "./db/setup";
-import { Alias } from "./db/AliasModel";
-import { parseError } from "./utils/mongoose";
 
 config();
+
+import swaggerUi from "swagger-ui-express";
+import { setup } from "./db/setup";
+import { ValidateError } from "tsoa";
+import { RegisterRoutes } from "./tsoa/routes";
+import SwaggerJSON from "./tsoa/swagger.json";
 
 if (!process.env.DB_URI) throw new Error('DB_URI is not set');
 setup(process.env.DB_URI);
@@ -14,44 +16,34 @@ const app = express();
 
 app.use(express.json());
 
-const ALIAS_MAX_LEN = Number.parseInt(process.env.ALIAS_MAX_LEN || '');
-if (isNaN(ALIAS_MAX_LEN)) throw new Error('ALIAS_MAX_LEN is not set');
+RegisterRoutes(app);
 
-app.post('/store', async (req, res, next) => {
-    try {
-        const { url } = req.body;
+app.use(
+    "/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(SwaggerJSON)
+);
 
-        const alias = await nanoid(ALIAS_MAX_LEN);
-        const model = new Alias({ url, alias });
-        await model.save();
-
-        res.status(200);
-        res.json({ url, alias });
-    } catch (error: any) {
-        res.status(400);
-        res.json({ message: 'Bad Input', errors: parseError(error) });
+app.use(function errorHandler(
+    err: unknown,
+    req: ExRequest,
+    res: ExResponse,
+    next: NextFunction
+): ExResponse | void {
+    if (err instanceof ValidateError) {
+        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+        return res.status(422).json({
+            message: "Validation Failed",
+            details: err?.fields,
+        });
     }
-});
-
-app.get('/read', async (req, res) => {
-    const { alias } = req.query;
-
-    const result = await Alias.findOne({ alias });
-
-    if (!result) {
-        res.status(404)
-            .json({ message: 'Not Found' });
-        return;
+    if (err instanceof Error) {
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
     }
 
-    res.status(200);
-    res.json(result);
-});
-
-app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-    console.log(err);
-    res.status(500);
-    res.json({ message: err.message });
+    next();
 });
 
 export { app };

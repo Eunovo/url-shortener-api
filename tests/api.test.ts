@@ -2,11 +2,11 @@ import request from "supertest";
 import assert from "assert";
 import mongoose from "mongoose";
 import { app } from "../src/app";
-import { Alias } from "../src/db/AliasModel";
+import { AliasModel } from "../src/db/AliasModel";
 
 describe('API test', () => {
     after(async () => {
-        await Alias.deleteMany({});
+        await AliasModel.deleteMany({});
         await mongoose.disconnect();
     })
 
@@ -19,15 +19,14 @@ describe('API test', () => {
         // Should be able to store and retrieve urls
         for (const url of urls) {
             let response = await request(app)
-                .post('/store')
+                .post('/alias')
                 .send({ url })
                 .expect(200);
 
             assert.notEqual(response.body.alias, undefined);
 
             response = await request(app)
-                .get('/read')
-                .query({ alias: response.body.alias })
+                .get(`/alias/${response.body.alias}`)
                 .expect(200);
 
             assert.equal(response.body.url, url);
