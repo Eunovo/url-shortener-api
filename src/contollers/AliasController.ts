@@ -24,7 +24,7 @@ type CreateAliasResponse = Pick<Alias, 'url' | 'alias'>;
 @Route("alias")
 export class AliasController extends Controller {
     @Get("{alias}")
-    public async getUrk(
+    public async getUrl(
         @Path() alias: string,
         @Res() notFoundResponse: TsoaResponse<404, { reason: string }>
     ): Promise<Alias> {
