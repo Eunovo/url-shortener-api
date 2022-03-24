@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid/async";
 import {
-    Body,
+    BodyProp,
     Controller,
     Get,
     Path,
@@ -18,11 +18,17 @@ import { parseError } from "../utils/mongoose";
 const ALIAS_MAX_LEN = Number.parseInt(process.env.ALIAS_MAX_LEN || '');
 if (isNaN(ALIAS_MAX_LEN)) throw new Error('ALIAS_MAX_LEN is not set');
 
-type CreateAliasBody = Pick<Alias, 'url'>;
 type CreateAliasResponse = Pick<Alias, 'url' | 'alias'>;
 
 @Route("alias")
 export class AliasController extends Controller {
+
+    /**
+     * Retrieve the url for the given alias
+     * @param alias 
+     * @param notFoundResponse 
+     * @returns 
+     */
     @Get("{alias}")
     public async getUrl(
         @Path() alias: string,
@@ -38,14 +44,17 @@ export class AliasController extends Controller {
         return result;
     }
 
+    /**
+     * Saves the url and returns an alias for it
+     * @param requestBody 
+     * @returns 
+     */
     @SuccessResponse("200", "Created")
     @Post()
     public async createAlias(
-        @Body() requestBody: CreateAliasBody
+        @BodyProp() url: string
     ): Promise<CreateAliasResponse> {
         try {
-            const { url } = requestBody;
-
             const alias = await nanoid(ALIAS_MAX_LEN);
             const model = new AliasModel({ url, alias });
             await model.save();

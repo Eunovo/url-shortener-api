@@ -29,16 +29,6 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_Alias.url-or-alias_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_Alias.url_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"url":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateAliasBody": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_Alias.url_","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -51,7 +41,7 @@ export function RegisterRoutes(app: express.Router) {
     // ###########################################################################################################
         app.get('/alias/:alias',
 
-            function AliasController_getUrk(request: any, response: any, next: any) {
+            function AliasController_getUrl(request: any, response: any, next: any) {
             const args = {
                     alias: {"in":"path","name":"alias","required":true,"dataType":"string"},
                     notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
@@ -66,7 +56,7 @@ export function RegisterRoutes(app: express.Router) {
                 const controller = new AliasController();
 
 
-              const promise = controller.getUrk.apply(controller, validatedArgs as any);
+              const promise = controller.getUrl.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -77,7 +67,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function AliasController_createAlias(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateAliasBody"},
+                    url: {"in":"body-prop","name":"url","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
