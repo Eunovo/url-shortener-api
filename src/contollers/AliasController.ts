@@ -70,6 +70,8 @@ export class AliasController extends Controller {
             this.setStatus(200);
             return { url, alias };
         } catch (error: any) {
+            if (error instanceof ValidateError)
+                throw error;
             throw new ValidateError(parseError(error), 'Bad Input');
         }
     }
