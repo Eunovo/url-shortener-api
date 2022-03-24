@@ -35,9 +35,9 @@ describe('API test', () => {
         // Should reject duplicate URLs
         for (const url of urls) {
             await request(app)
-                .post('/store')
+                .post('/alias')
                 .send({ url })
-                .expect(400);
+                .expect(422);
         }
     });
 });

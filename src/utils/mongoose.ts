@@ -6,7 +6,7 @@ export function parseError(error: any): FieldErrors {
     let errors: FieldErrors = {};
 
     if (error.errors) {
-        Object.keys(error.errors).reduce(
+        errors = Object.keys(error.errors).reduce(
             (acc: any, key: string) => {
                 const value = error.errors[key];
                 const message: any = ({
@@ -14,15 +14,15 @@ export function parseError(error: any): FieldErrors {
                 } as any)[value.kind];
                 return { ...acc, [key]: message }
             },
-            errors
+            {}
         );
     }
 
     if (error.code === DUPLICATE_KEY_ERROR) {
-        Object.keys(error.keyValue).reduce((acc: any, key: string) => {
+        errors = Object.keys(error.keyValue).reduce((acc: any, key: string) => {
             const value = error.keyValue[key];
             return { ...acc, [key]: `"${value}" already exists` }
-        }, errors);
+        }, {});
     }
 
     return errors;
